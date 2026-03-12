@@ -1,77 +1,102 @@
-# Patrol Robot
+# 🤖 Patrol Robot
 
-An AI-powered patrol robot built with ESP32 and Raspberry Pi. Uses computer vision (YOLO) for person and bottle detection, with obstacle avoidance, environmental sensors, and a web dashboard for monitoring and manual control.
+> AI-powered patrol robot with ESP32 + Raspberry Pi. Computer vision (YOLO) for person and bottle detection, obstacle avoidance, environmental sensors, and a web dashboard.
 
-## Architecture
+---
 
-- **ESP32** – Motor control, ultrasonic sensor, DHT11 (temp/humidity), light sensor, servo, OLED display. Communicates with the Pi over serial.
-- **Raspberry Pi** – Runs YOLOv8 for object detection, streams video, and serves a Flask web dashboard.
+## 🏗 Architecture
 
-## Hardware
+| Component | Role |
+|-----------|------|
+| **ESP32** | Motor control, ultrasonic, DHT11, light sensor, servo, OLED. Talks to Pi over serial. |
+| **Raspberry Pi** | YOLOv8 object detection, video stream, Flask web dashboard. |
 
-### ESP32 Components
-- L298N motor driver (DC motors)
-- HC-SR04 ultrasonic sensor
-- DHT11 temperature/humidity sensor
-- Light sensor
-- Servo motor
-- SSD1306 OLED (128×64)
+---
 
-### Raspberry Pi
-- Pi Camera 2
-- USB serial connection to ESP32
+## 📌 ESP32 Pinout
 
-## Project Structure
+From `pins.odt`:
+
+| Component | Signal | GPIO |
+|-----------|--------|------|
+| **L298N** | IN1 | 18 |
+| | IN2 | 19 |
+| | IN3 | 21 |
+| | IN4 | 20 |
+| | ENA | 47 |
+| | ENB | 48 |
+| **Ultrasonic (HC-SR04)** | TRIG | 12 |
+| | ECHO | 13 |
+| **DHT11** | DATA | 15 |
+| **Light sensor** | DATA | 5 |
+| **OLED (SSD1306)** | SCL | 41 |
+| | SDA | 42 |
+| **Servo** | PWM | 37 |
+
+---
+
+## 🔧 Hardware
+
+**ESP32:** L298N, HC-SR04, DHT11, light sensor, servo, SSD1306 OLED (128×64)  
+**Raspberry Pi:** Pi Camera 2, USB serial to ESP32
+
+---
+
+## 📁 Project Structure
 
 ```
 patrolRobot/
 ├── esp_working/       # Main ESP32 firmware
-├── raspberry/         # Pi Python app (AI brain + web server)
-└── test_everything/   # ESP32 test sketch for all sensors
+├── raspberry/         # Pi app (AI brain + web server)
+├── test_everything/   # ESP32 sensor test sketch
+└── pins.odt           # Pin reference
 ```
 
-## Setup
+---
+
+## ⚡ Setup
 
 ### ESP32 (Arduino IDE)
 1. Install ESP32 board support
-2. Install libraries: Adafruit GFX, Adafruit SSD1306, DHT, ESP32Servo
-3. Open `esp_working/esp_working.ino` and upload
+2. Libraries: Adafruit GFX, Adafruit SSD1306, DHT, ESP32Servo
+3. Open `esp_working/esp_working.ino` → Upload
 
 ### Raspberry Pi
-1. Install dependencies:
-   ```bash
-   pip install opencv-python pyserial flask ultralytics picamera2
-   ```
-2. Download YOLO model (auto-downloaded on first run, or place `yolov8n.pt` in the project)
-3. Connect ESP32 via USB (`/dev/ttyACM0`)
-4. Run:
-   ```bash
-   python raspberry/ai_brain.py
-   ```
+```bash
+pip install opencv-python pyserial flask ultralytics picamera2
+python raspberry/ai_brain.py
+```
+- Connect ESP32 via USB (`/dev/ttyACM0`)
+- YOLO model (`yolov8n.pt`) downloads on first run
 
 ### Web Dashboard
-Open `http://<raspberry-pi-ip>:5000` in a browser to:
-- View live camera feed with detection overlays
-- See sensor data (distance, temp, humidity, light)
-- Control the robot manually (FORWARD, BACK, LEFT, RIGHT, STOP)
-- Toggle between AI and manual mode
+Open `http://<pi-ip>:5000`:
+- Live camera feed with detection overlays
+- Sensor data (distance, temp, humidity, light)
+- Manual control (FORWARD, BACK, LEFT, RIGHT, STOP)
+- Toggle AI / Manual mode
 
-## Serial Protocol
+---
 
-**Pi → ESP32:**
-- `FORWARD`, `BACK`, `LEFT`, `RIGHT`, `STOP` – motor commands
-- `PERSON`, `NOPERSON` – person detection state
-- `SERVO:<angle>` – set servo angle (70–110)
+## 📡 Serial Protocol
 
-**ESP32 → Pi:**
-- `DIST:<cm>;TEMP:<°C>;HUM:<%>;LIGHT:<0|1>`
+| Direction | Format |
+|-----------|--------|
+| **Pi → ESP32** | `FORWARD` \| `BACK` \| `LEFT` \| `RIGHT` \| `STOP` \| `PERSON` \| `NOPERSON` \| `SERVO:<70-110>` |
+| **ESP32 → Pi** | `DIST:<cm>;TEMP:<°C>;HUM:<%>;LIGHT:<0\|1>` |
 
-## Behavior
+---
 
-- **AI mode:** Detects persons (follows/tracks) and bottles (stops). Sends motor commands based on object position.
-- **Manual mode:** User controls via web buttons.
-- **Obstacle avoidance:** ESP32 stops and turns when ultrasonic detects objects &lt; 20 cm.
+## 🧠 Behavior
 
-## License
+| Mode | Description |
+|------|-------------|
+| **AI** | Tracks persons, stops for bottles. Commands based on object position. |
+| **Manual** | Web buttons control motors. |
+| **Obstacle** | ESP32 stops and turns when ultrasonic &lt; 20 cm. |
+
+---
+
+## 📄 License
 
 MIT
