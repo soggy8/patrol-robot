@@ -10,8 +10,8 @@
 #define IN2 19
 #define IN3 21
 #define IN4 20
-#define ENA 47
-#define ENB 48
+#define ENA 45
+#define ENB 46
 
 #define TRIG 12
 #define ECHO 13
