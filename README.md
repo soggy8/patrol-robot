@@ -23,8 +23,8 @@ From `pins.odt`:
 | | IN2 | 19 |
 | | IN3 | 21 |
 | | IN4 | 20 |
-| | ENA | 47 |
-| | ENB | 48 |
+| | ENA | 45 |
+| | ENB | 46 |
 | **Ultrasonic (HC-SR04)** | TRIG | 12 |
 | | ECHO | 13 |
 | **DHT11** | DATA | 15 |
